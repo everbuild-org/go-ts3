@@ -75,7 +75,23 @@ func DecodeResponse(lines []string, v interface{}) error {
 			if len(parts) == 2 {
 				v := Decode(parts[1])
 				if i, err := strconv.Atoi(v); err != nil {
+					// Only support comma seperated lists
+					// by keyname to avoid incorrect decoding.
+					if key == "client_servergroups" {
+						parts := strings.Split(v, ",")
+						serverGroups := make([]int, len(parts))
+						for i, s := range parts {
+							group, err := strconv.Atoi(s)
+							if err != nil {
+								fmt.Printf("decode server group: %w", err)
+								return fmt.Errorf("decode server group: %w", err)
+							}
+							serverGroups[i] = group
+						}
+						input[key] = serverGroups
+					} else {
 						input[key] = v
+					}
 				} else {
 					input[key] = i
 				}

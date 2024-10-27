@@ -425,7 +425,7 @@ type OnlineClientTimes struct {
 type OnlineClientGroups struct {
 	ChannelGroupID                 *int   `ms:"client_channel_group_id"`
 	ChannelGroupInheritedChannelID *int   `ms:"client_channel_group_inherited_channel_id"`
-	ServerGroups                   *int `ms:"client_servergroups"`
+	ServerGroups                   *[]int `ms:"client_servergroups"`
 }
 
 // OnlineClientInfo represents all ClientList extensions when the ClientInfo parameter is passed.
