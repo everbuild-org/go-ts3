@@ -50,7 +50,7 @@ func Decode(str string) string {
 }
 
 // DecodeResponse decodes a response into a struct.
-func DecodeResponse(lines []string, v interface{}) error {
+func DecodeResponse(lines []string, v interface{}, flatten bool) error {
 	if len(lines) > 1 {
 		return NewInvalidResponseError("too many lines", lines)
 	} else if len(lines) == 0 {
@@ -77,13 +77,12 @@ func DecodeResponse(lines []string, v interface{}) error {
 				if i, err := strconv.Atoi(v); err != nil {
 					// Only support comma seperated lists
 					// by keyname to avoid incorrect decoding.
-					if key == "client_servergroups" {
+					if key == "client_servergroups" && !flatten {
 						parts := strings.Split(v, ",")
 						serverGroups := make([]int, len(parts))
 						for i, s := range parts {
 							group, err := strconv.Atoi(s)
 							if err != nil {
-								fmt.Printf("decode server group: %w", err)
 								return fmt.Errorf("decode server group: %w", err)
 							}
 							serverGroups[i] = group
@@ -116,7 +115,12 @@ func DecodeResponse(lines []string, v interface{}) error {
 		return nil
 	}
 
-	return decodeMap(input, v)
+	err := decodeMap(input, v)
+	if err != nil {
+		return fmt.Errorf("decode response: %w", err)
+	}
+
+	return nil
 }
 
 // decodeMap decodes input into r.

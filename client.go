@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"io"
+	"log"
 	"net"
 	"regexp"
 	"strings"
@@ -273,6 +274,8 @@ func (c *Client) messageHandler() {
 					case c.notify <- n:
 					default:
 					}
+				} else {
+					log.Printf("client: notification: %v", err)
 				}
 			} else {
 				// Partial response.
@@ -365,7 +368,7 @@ func (c *Client) ExecCmd(cmd *Cmd) ([]string, error) {
 	}
 
 	if cmd.response != nil {
-		if err := DecodeResponse(resp.lines, cmd.response); err != nil {
+		if err := DecodeResponse(resp.lines, cmd.response, false); err != nil {
 			return nil, err
 		}
 	}

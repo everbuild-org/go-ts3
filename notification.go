@@ -95,7 +95,7 @@ func decodeNotification(str string) (Notification, error) {
 		Type: strings.TrimPrefix(parts[0], "notify"),
 	}
 
-	err := DecodeResponse([]string{parts[1]}, &n.Data)
+	err := DecodeResponse([]string{parts[1]}, &n.Data, true)
 
 	return n, err
 }
